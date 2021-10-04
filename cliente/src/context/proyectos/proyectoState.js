@@ -1,9 +1,12 @@
-import React, {useReducer} from 'react'
+import React, {useReducer} from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import ProyectoContext from './proyectoContext'
 import proyectoReducer from './proyectoReducer'
 import {FORMULARIO_PROYECTO,
         OBTENER_PROYECTO,
-        AGREGAR_PROYECTO
+        AGREGAR_PROYECTO,
+        VALIDAR_FORMULARIO,
+        PROYECTO_ACTUAL
         }from '../../types'
 
 const ProyectoState = props => {
@@ -17,7 +20,9 @@ const ProyectoState = props => {
     const initialState = {
          proyectos : [],
         // form del aside
-        formulario: false
+        formulario: false,
+        errorform: false,
+        proyecto: null
     }
 
     // Dispach para ejecutar las acciones
@@ -29,11 +34,35 @@ const ProyectoState = props => {
             type: FORMULARIO_PROYECTO
         })
     }
-
+    // Obtener todos los proyectos
     const obtenerProyectos = () => {
         dispatch({
             type: OBTENER_PROYECTO, 
             payload: proyectos
+        })
+    }
+    // Agregar proyecto
+    const agregarProyecto = proyecto => {
+        proyecto.id =  uuidv4();
+        // Insertar proyecto en state
+        dispatch({
+            type: AGREGAR_PROYECTO, 
+            payload: proyecto
+        })
+    }
+
+    // validar formulario por errores
+    const mostrarError = () => {
+        dispatch({
+            type: VALIDAR_FORMULARIO
+        })
+    }
+
+    // Selecciona proyecto actual
+    const poryectoActual = proyectoId => {
+        dispatch({
+            type: PROYECTO_ACTUAL,
+            payload: proyectoId
         })
     }
 
@@ -42,8 +71,13 @@ const ProyectoState = props => {
             value={{
                 proyectos: state.proyectos,
                 formulario: state.formulario,
+                errorform: state.errorform,
+                proyecto: state.proyecto,
                 mostrarFormulario,
-                obtenerProyectos
+                obtenerProyectos, 
+                agregarProyecto,
+                mostrarError,
+                poryectoActual
             }}
         >
                 {props.children}
