@@ -6,7 +6,8 @@ import {FORMULARIO_PROYECTO,
         OBTENER_PROYECTO,
         AGREGAR_PROYECTO,
         VALIDAR_FORMULARIO,
-        PROYECTO_ACTUAL
+        PROYECTO_ACTUAL,
+        ELIMINAR_PROYECTO
         }from '../../types'
 
 const ProyectoState = props => {
@@ -59,9 +60,16 @@ const ProyectoState = props => {
     }
 
     // Selecciona proyecto actual
-    const poryectoActual = proyectoId => {
+    const proyectoActual = proyectoId => {
         dispatch({
             type: PROYECTO_ACTUAL,
+            payload: proyectoId
+        })
+    }
+    // Eliminar proyecto actual
+    const eliminarProyecto = proyectoId => {
+        dispatch({
+            type: ELIMINAR_PROYECTO,
             payload: proyectoId
         })
     }
@@ -77,7 +85,8 @@ const ProyectoState = props => {
                 obtenerProyectos, 
                 agregarProyecto,
                 mostrarError,
-                poryectoActual
+                proyectoActual,
+                eliminarProyecto
             }}
         >
                 {props.children}
