@@ -31,16 +31,30 @@ exports.authUsuario = async (req, res) => {
             id: usuario.id
         }
         }
+        // Si pasa mandar token
         jwt.sign(payload, process.env.SECRETA, {
             expiresIn: 3600 // 1 hora
         }, (error, token) => {
             if(error) throw error; 
             // mensaje de confirmacion
-            res.json({token})
+            res.json({ token })
         })
 
 
     }catch(err){
         console.log(err)
+    }
+}
+
+
+// Obtiene usuario autenticado
+exports.usuarioAutenticado = async (req, res) => {
+    try {
+        // req.usuario.id viene de jwt en authMiddleware (le pasamos todo menos password)
+        const usuario = await Usuario.findById(req.usuario.id).select('-password')
+        res.json({usuario})
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({msg:'Hubo un error'})
     }
 }

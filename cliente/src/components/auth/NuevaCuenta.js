@@ -1,13 +1,27 @@
-import React, {useState, useContext} from 'react'
+import React, {useState, useContext, useEffect} from 'react'
 import { Link } from 'react-router-dom'
 import AlertasContext from '../../context/alertas/alertasContext'
+import AuthContext from '../../context/authentication/authContext'
 
 
-const NuevaCuenta = () => {
+const NuevaCuenta = (props) => {
     // extraer valores de context
     const alertaContext = useContext(AlertasContext);
     const { alerta, mostrarAlerta } = alertaContext;
 
+    const authContext = useContext(AuthContext);
+    const { mensaje, authenticate, registrarUsuario } = authContext;
+
+    // En caso de que el usuario este auth o ya exista
+    useEffect(() => {
+        if(authenticate){
+            props.history.push('/proyectos')
+        }
+        if(mensaje){
+            mostrarAlerta(mensaje.msg, mensaje.categoria)
+        }
+         // eslint-disable-next-line
+    }, [mensaje, authenticate, props.history, mostrarAlerta])
 
     const [cuenta, guardarCuenta] = useState({
         nombre:'',
@@ -46,7 +60,11 @@ const NuevaCuenta = () => {
             return;
         }
         // pasarlo al action
-        
+        registrarUsuario({
+            nombre,
+            email,
+            password
+        })
     }
 
     return ( 

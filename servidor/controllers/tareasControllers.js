@@ -3,7 +3,7 @@ const Proyecto = require('../models/ProyectoModel')
 const { validationResult } = require('express-validator')
  
 
-// crear tarea nueva 
+
 exports.crearTarea = async (req, res) =>{
     // Revisar si hay errores
    const errors = validationResult(req)
@@ -31,7 +31,7 @@ exports.crearTarea = async (req, res) =>{
        res.status(500).send({msg:'Hubo un error'})
    }
 }
-// obtener tareas por proyecto
+
 exports.obtenerTareas = async (req, res) => {
   // Revisar si hay errores
   const errors = validationResult(req)
@@ -40,8 +40,8 @@ exports.obtenerTareas = async (req, res) => {
   }
 
   try {
-   // extraer proyecto y si existe
-   const {proyecto} = req.body;
+   // extraer proyecto y si existe, query es por que lo pasamos como params
+   const {proyecto} = req.query;
    const existeProyecto = await Proyecto.findById(proyecto)
    if(!existeProyecto){
        res.status(404).json({msg: "Proyect no found!"})
@@ -51,7 +51,7 @@ exports.obtenerTareas = async (req, res) => {
        return res.status(401).json({msg: 'No authorization'})
    }       
   // obtener tareas por proyecto
-  const tareas = await Tarea.find({ proyecto })
+  const tareas = await Tarea.find({ proyecto }).sort({ creado: -1 })
   res.json({tareas})
   } catch (error) {
       console.log(error)
@@ -59,7 +59,7 @@ exports.obtenerTareas = async (req, res) => {
   }    
 }
 
-// actualizar tareas por proyecto
+
 exports.actualizarTareas = async (req, res) => {
   // Revisar si hay errores
   const errors = validationResult(req)
@@ -82,8 +82,8 @@ exports.actualizarTareas = async (req, res) => {
    }
    // crear obj con nueva info
    const nuevaTarea = {};
-   if(nombre) nuevaTarea.nombre = nombre;
-   if(estado) nuevaTarea.estado = estado;    
+   nuevaTarea.nombre = nombre;
+   nuevaTarea.estado = estado;    
   // guardar tarea actualizada
    tarea = await Tarea.findOneAndUpdate({_id: req.params.id }, nuevaTarea, {new: true}); 
    res.json({tarea})
@@ -93,7 +93,7 @@ exports.actualizarTareas = async (req, res) => {
       res.status(500).send({msg:'Hubo un error'})
   }    
 }
-// eliminar tarea
+
 exports.eliminarTareas = async (req, res) => {
     // Revisar si hay errores
     const errors = validationResult(req)
@@ -103,7 +103,7 @@ exports.eliminarTareas = async (req, res) => {
   
     try {
      // extraer proyecto y si existe
-     const {proyecto} = req.body;
+     const {proyecto} = req.query;
      const existeProyecto = await Proyecto.findById(proyecto)
     // si tarea existe
     let tarea = await Tarea.findById(req.params.id)

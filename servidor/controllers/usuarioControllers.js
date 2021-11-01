@@ -36,11 +36,11 @@ exports.crearUsuario = async (req, res) => {
         }, (error, token) => {
             if(error) throw error; 
             // mensaje de confirmacion
-            res.json({token})
+            res.json({ token })
         })
 
     }catch(error){
         console.log(error)
-        res.status(400).send('Hubo un error')
+        res.status(400).send({msg:'Hubo un error'})
     }
 }
